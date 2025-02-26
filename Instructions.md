@@ -1,38 +1,42 @@
 # ArchitectAI: Intelligent Design Management Platform
-## Product Requirements Document for Cursor Coding Agent Implementation
+## Product Requirements Document (PRD) - 2023
 
 ## Executive Summary
-ArchitectAI is an AI-powered design management platform for architectural teams to organize, analyze, and collaborate on complex projects. This PRD provides specific, actionable directives for a cursor coding agent to implement the platform. The system will reduce administrative overhead by 40% through automated file organization, contextual insights, and streamlined collaboration workflows. Target users are small to mid-sized architectural firms managing multiple complex projects.
+ArchitectAI is an AI-powered design management platform enabling architectural teams to efficiently organize, analyze, and collaborate on complex projects. The platform aims to reduce administrative overhead by 40% through automated file organization, contextual insights, and streamlined collaboration workflows. 
+
+**Target Users:** Small to mid-sized architectural firms managing multiple complex projects.  
+**Business Impact:** Increase design efficiency and reduce rework by up to 30%.
 
 ## 1. Implementation Objectives
 
-### 1.1 Specific Technical Goals
-1. Create a Next.js application with App Router that processes and organizes architectural files
-2. Implement AI-powered categorization and search for design assets
-3. Build a contextual assistant that identifies conflicts and provides design recommendations
-4. Develop role-based collaboration tools for architectural workflows
-5. Integrate with industry-standard file formats and tools
+### 1.1 Technical Goals
+1. Develop a responsive Next.js application with App Router for organizing architectural files
+2. Implement AI-powered asset categorization and semantic search capabilities
+3. Create an intelligent assistant that identifies conflicts and provides design recommendations
+4. Build role-based collaboration tools optimized for architectural workflows
+5. Seamlessly integrate with industry-standard file formats and tools
 
-### 1.2 User Problems to Solve
-1. **File Organization**: Architects spend 7.5 hours/week searching for files, with 62% reporting version control issues
-2. **Design Context**: 14% of revisions stem from overlooked specifications or conflicts
-3. **Stakeholder Communication**: 30% of project time is spent coordinating between clients, contractors, and consultants
-4. **Regulatory Compliance**: Architects struggle to maintain awareness of changing building codes and regulations
-5. **Knowledge Management**: Critical design decisions and rationales are often lost between project phases
+### 1.2 User Problems Addressed
+1. **File Organization:** Architects spend 7.5 hours/week searching for files; 62% report version control issues
+2. **Design Context:** 14% of revisions stem from overlooked specifications or conflicts
+3. **Stakeholder Communication:** 30% of project time is spent coordinating between clients, contractors, and consultants
+4. **Regulatory Compliance:** Teams struggle to track changing building codes across jurisdictions
+5. **Knowledge Management:** Critical design decisions and rationales are frequently lost between project phases
 
-## 2. Technical Requirements
+## 2. Technical Architecture
 
-### 2.1 Frontend Stack
-- **Framework**: Next.js with App Router
-- **UI Library**: Shadcn UI + Tailwind CSS
-- **State Management**: 
-  - Zustand for UI/application state
+### 2.1 Frontend Architecture
+- **Framework:** Next.js 14+ with App Router and React Server Components
+- **UI Components:** Shadcn UI (built on Radix UI) + Tailwind CSS
+- **State Management:** 
+  - Zustand for client-side application state
   - React Query for server state and data fetching
-- **Visualization**: 
+  - Zod for runtime type validation
+- **Visualization:** 
   - react-pdf for document viewing
-  - @react-three/fiber for 3D models
+  - @react-three/fiber for 3D model visualization
   - recharts for analytics dashboards
-- **File Structure**:
+- **File Structure:**
   ```
   app/
     (auth)/
@@ -63,8 +67,8 @@ ArchitectAI is an AI-powered design management platform for architectural teams 
     useAI.ts
   ```
 
-### 2.2 Backend Implementation
-- **Database**: Supabase PostgreSQL with the following schema:
+### 2.2 Backend Infrastructure
+- **Database:** Supabase PostgreSQL with the following schema:
   - `organizations`: id, name, plan_tier, created_at
   - `users`: id, email, name, role, org_id, created_at
   - `projects`: id, name, description, org_id, status, created_at, updated_at
@@ -73,89 +77,90 @@ ArchitectAI is an AI-powered design management platform for architectural teams 
   - `ai_insights`: id, file_id, insight_type, content, created_at, applied_status
   - `workflows`: id, project_id, name, steps, current_step, assignee_id, created_at
   
-  **Indexes**:
+  **Optimized Indexes:**
   - B-tree indexes on frequently filtered fields (project_id, user_id, file_id)
-  - GIN indexes on metadata JSONB fields
-  - pgvector indexes on embedding columns
+  - GIN indexes on JSONB metadata fields for efficient querying
+  - pgvector indexes for similarity search on embedding columns
 
-- **File Storage**: Supabase Storage with the following buckets:
-  - `project-files`: Main storage for all project documents
-  - `file-previews`: Generated thumbnails and previews (small, medium, large)
-  - `ai-exports`: Exports and reports generated by AI
-  - `backup-archives`: Periodic project backups
+- **Storage Solution:** Supabase Storage with the following buckets:
+  - `project-files`: Primary storage for all project documents
+  - `file-previews`: Generated thumbnails and previews (thumbnails, medium, large)
+  - `ai-exports`: Reports and exports generated by AI analysis
+  - `backup-archives`: Periodic project backup archives
 
-- **Auth Implementation**: Supabase Auth with JWTs, with these roles:
-  - Admin: Full access to organization
+- **Authentication:** Supabase Auth with JWTs and the following roles:
+  - Admin: Full organization access
   - Project Manager: Full access to assigned projects
   - Architect: Edit access to assigned projects
   - Reviewer: Comment access to assigned projects
   - Client: View access to specific files
   - Contractor: Limited access to construction documentation
 
-- **Serverless Functions**:
+- **Serverless Functions:**
   - Edge Functions for high-performance API endpoints
-  - Background Functions for long-running tasks (file processing, AI analysis)
+  - Background Functions for resource-intensive tasks (file processing, AI analysis)
 
-### 2.3 AI Implementation
-- **RAG Pipeline**: LangChain.js with the following components:
-  - DocumentLoaders for PDF, DWG, RVT, and other formats
+### 2.3 AI Architecture
+- **Retrieval-Augmented Generation (RAG):** LangChain.js with:
+  - DocumentLoaders for PDF, DWG, RVT, and other architectural formats
   - TextSplitters optimized for architectural documents (chunk size: 1000, overlap: 200)
-  - OpenAIEmbeddings for vector representation
+  - OpenAI Ada-002 embeddings for vector representation
   - Supabase pgvector for similarity search
   - MetadataFilters for context-aware retrieval
 
-- **LLM Integration**: GPT-4 Turbo with the following parameters:
-  - Temperature: 0.2 for technical answers, 0.7 for creative suggestions
-  - System prompt focus: architectural domain knowledge, building codes, design principles
-  - API implementation with retry logic and fallback models (GPT-3.5-Turbo for less complex tasks)
-  - Token usage tracking and optimization strategies
-  - Caching of common responses with TTL based on content type
+- **LLM Implementation:** OpenAI GPT-4 Turbo with:
+  - Precision tuning: Temperature 0.2 for technical answers, 0.7 for creative suggestions
+  - Architectural domain prompting focusing on design principles and building codes
+  - Resilient API implementation with retry logic and fallback models
+  - Tiered approach: GPT-4 for complex tasks, GPT-3.5 for routine operations
+  - Token usage tracking and optimization
+  - Response caching with content-specific TTL
 
-- **Document Processing Flow**:
-  1. Upload through resumable.js with configurable chunk size (default 2MB)
-  2. Immediate extraction of basic metadata for quick cataloging
-  3. Server-side processing queue for text extraction and deeper analysis
-  4. Generate embeddings and store in pgvector with regular reindexing
-  5. Create preview images at 3 resolutions (thumbnail, medium, large)
-  6. Extract key attributes based on file type with format-specific extractors
-  7. Periodic background reprocessing for updated AI models
+- **Document Processing Pipeline:**
+  1. Upload via resumable.js with configurable chunk size (default 2MB)
+  2. Initial metadata extraction for immediate cataloging
+  3. Asynchronous processing queue for text extraction and analysis
+  4. Embedding generation and vector storage with scheduled reindexing
+  5. Multi-resolution preview generation (thumbnail, medium, large)
+  6. Format-specific attribute extraction using specialized parsers
+  7. Scheduled reprocessing when AI models are updated
 
-## 3. Core Feature Specifications
+## 3. Core Features
 
-### 3.1 File Management System
+### 3.1 Intelligent File Management
 
 #### Automatic Classification
-- **Implementation**: Multi-label classifier using file content and metadata
-- **Categories**: 
+- **Classification Engine:** Multi-label classifier using file content and metadata
+- **Primary Categories:** 
   - By Type: Plans, Elevations, Sections, Details, 3D Models, Specifications, Contracts
   - By Phase: Concept, Schematic, Design Development, Construction Documents
   - By Discipline: Architectural, Structural, MEP, Interior, Landscape
-- **Storage Pattern**: `/{projectId}/{phase}/{type}/{filename}-v{version}.{ext}`
-- **Metadata Extraction**: Extract dimensions, scale, date, author from file headers
-- **Large File Handling**: Special processing for files >500MB with streaming extraction
-- **Batch Processing**: Support for multi-file uploads with shared metadata
+- **Storage Structure:** `/{projectId}/{phase}/{type}/{filename}-v{version}.{ext}`
+- **Metadata Processing:** Extract dimensions, scale, date, author from file headers
+- **Large File Handling:** Streaming extraction for files >500MB with progress reporting
+- **Batch Operations:** Multi-file uploads with shared metadata assignment
 
-#### Version Control
-- **Detection Algorithm**: Compare file names, contents, and modification dates
-- **Storage Method**: Keep all versions with parent-child relationships
-- **Diff Visualization**: Side-by-side comparison with highlighted changes
-- **Timeline Display**: Interactive timeline showing version history with author and changes
-- **Merge Capability**: Suggest combining changes from different versions
-- **Rollback Functionality**: One-click restoration of previous versions
+#### Version Control System
+- **Version Detection:** Intelligent comparison of file names, contents, and modification dates
+- **Storage Strategy:** Store all versions with parent-child relationship tracking
+- **Visual Comparison:** Side-by-side diff visualization with highlighted changes
+- **History Visualization:** Interactive timeline showing version evolution with change metadata
+- **Smart Merging:** Suggest intelligent combinations of changes from different versions
+- **Rollback Capability:** One-click restoration of previous versions with change tracking
 
-#### Search Functionality
-- **Query Processing**: Parse natural language into structured filters
-- **Indexing Strategy**: Full-text search + vector similarity + metadata filtering
-- **Result Ranking**: Weighted by recency, relevance, and user access patterns
-- **Filter Options**: By file type, date range, author, content keywords, and project phase
-- **Saved Searches**: Allow users to save and share complex search queries
-- **Search Analytics**: Track common searches to improve system organization
+#### Semantic Search Engine
+- **Query Processing:** Natural language processing for structured filter extraction
+- **Search Technology:** Hybrid approach combining full-text search, vector similarity, and metadata filtering
+- **Result Ranking:** Smart ranking by recency, relevance, and user access patterns
+- **Advanced Filtering:** By file type, date range, author, content keywords, and project phase
+- **Search Patterns:** Save and share complex search queries across team members
+- **Search Analytics:** Track common search patterns to improve information architecture
 
-### 3.2 AI Assistant Module
+### 3.2 AI Design Assistant
 
-#### Document Q&A
-- **Context Window**: Up to 50 pages of relevant documents
-- **Prompt Template**:
+#### Document Intelligence
+- **Context Capacity:** Process up to 50 pages of relevant documents per query
+- **Prompt Engineering:**
   ```
   You are an architectural assistant analyzing project {project_name}.
   Answer the following question using only information from these documents:
@@ -163,261 +168,261 @@ ArchitectAI is an AI-powered design management platform for architectural teams 
   
   Question: {question}
   ```
-- **Source Citations**: Include page number and document name for each fact
-- **Confidence Scoring**: Indicate low/medium/high confidence based on evidence
-- **Progressive Loading**: Stream answers as they're generated
-- **Follow-up Detection**: Maintain conversation context for related questions
-- **Domain Knowledge**: Supplement with architectural reference information
+- **Citation System:** Include page numbers and document names for all information sources
+- **Confidence Indicators:** Clearly mark low/medium/high confidence based on available evidence
+- **Streaming Interface:** Progressively display answers as they're generated
+- **Conversation Context:** Maintain contextual awareness for follow-up questions
+- **Knowledge Enhancement:** Supplement project data with architectural reference information
 
 #### Conflict Detection
-- **Processing Steps**:
-  1. Extract geometric data from different plan types
-  2. Identify spatial overlaps between structural and MEP elements
-  3. Check clearance requirements against actual dimensions
-  4. Flag potential issues with severity ratings (Critical, Major, Minor)
-  5. Track resolution status of identified conflicts
-- **Visualization**: Overlay highlights on affected areas with color coding by severity
-- **Resolution Suggestions**: Generate 2-3 alternative approaches with pros/cons
-- **Conflict History**: Track resolution of conflicts across versions
-- **Automated Rechecking**: Verify if new versions resolve previously identified conflicts
+- **Analysis Process:**
+  1. Extract geometric data from plan types (structural, mechanical, electrical, plumbing)
+  2. Identify spatial overlaps between building systems
+  3. Verify clearance requirements against actual dimensions
+  4. Flag issues by severity (Critical, Major, Minor)
+  5. Track resolution status across project lifecycle
+- **Visualization Tools:** Interactive overlays with color-coded severity indicators
+- **Resolution Engine:** Generate 2-3 alternative solutions with pros/cons analysis
+- **Change Tracking:** Monitor conflict resolution across document versions
+- **Verification System:** Automatically verify if new versions resolve identified conflicts
 
-#### Code Compliance
-- **Supported Codes**: IBC 2021, NFPA 101, ADA Standards, local jurisdiction codes
-- **Check Categories**: Egress, accessibility, fire separation, structural requirements, energy efficiency
-- **Implementation**: Rule-based system + LLM verification with code reference database
-- **Reporting**: Generate compliance report with specific reference to code sections
-- **Update Mechanism**: Regular updates to compliance database as codes change
-- **Jurisdiction Awareness**: Apply relevant codes based on project location
+#### Code Compliance Checker
+- **Code Database:** IBC 2021, NFPA 101, ADA Standards, local jurisdiction codes
+- **Compliance Categories:** Egress, accessibility, fire separation, structural requirements, energy efficiency
+- **Analysis Approach:** Hybrid system combining rule-based checks and LLM verification
+- **Documentation:** Detailed compliance reports with specific code section references
+- **Maintenance:** Regular updates to compliance database as building codes evolve
+- **Location Awareness:** Apply relevant code requirements based on project jurisdiction
 
-### 3.3 Collaboration Features
+### 3.3 Collaboration Hub
 
-#### Visual Commenting
-- **Implementation**: SVG overlay layer on document previews
-- **Comment Types**: Text, freehand drawing, measurement, approval stamps
-- **Data Structure**: Comment object with coordinates, attachment point, and thread
-- **Notifications**: Email + in-app for comment mentions and replies
-- **Status Tracking**: Mark comments as Pending, Addressed, or Resolved
-- **Filtering**: View comments by user, date, status, or area of document
-- **Export**: Generate comment reports for meetings and reviews
+#### Visual Annotation System
+- **Technical Implementation:** SVG overlay layer on document previews
+- **Annotation Types:** Text, freehand drawing, measurements, approval stamps
+- **Data Structure:** Comment objects with coordinates, attachment points, and threaded replies
+- **Notification System:** Email + in-app alerts for mentions and replies
+- **Status Workflow:** Track comments as Pending, Addressed, or Resolved
+- **Filter Capabilities:** View comments by user, date, status, or document region
+- **Reporting:** Generate structured comment reports for meetings and reviews
 
-#### Approval Workflows
-- **States**: Draft → In Review → Approved/Needs Revision
-- **Transition Rules**: Configurable by project administrators
-- **Approval Actions**: Digital signature capture, timestamp, role verification
-- **Audit Trail**: Complete history of document state changes with responsible parties
-- **Parallel Workflows**: Support for simultaneous reviews by different stakeholders
-- **Conditional Logic**: Set up if/then rules for workflow progression
-- **SLA Tracking**: Monitor time in each approval state with alerts for delays
+#### Approval Workflow Engine
+- **State Management:** Draft → In Review → Approved/Needs Revision
+- **Workflow Configuration:** Customizable transition rules defined by project administrators
+- **Approval Process:** Digital signatures with timestamps and role verification
+- **Audit Capabilities:** Complete history of document state changes with responsible parties
+- **Review Parallelization:** Support for simultaneous reviews by different stakeholders
+- **Conditional Logic:** Configure if/then rules for workflow progression
+- **SLA Monitoring:** Track time in each approval state with customizable alerts
 
-#### Client Portal
-- **Interface**: Simplified view optimized for non-technical users
-- **Capabilities**: View approved documents, add comments, approve designs
-- **Access Control**: Time-limited links with watermarking and download restrictions
-- **Feedback Collection**: Structured forms with visual references
-- **Decision Tracking**: Record and track client approvals and change requests
-- **Mobile Optimization**: Responsive design for on-site reviews
-- **White-labeling**: Customizable branding for client-facing interfaces
+#### Client Engagement Portal
+- **Interface Design:** Simplified view optimized for non-technical stakeholders
+- **Core Functions:** View approved documents, add comments, approve designs
+- **Security Controls:** Time-limited links with watermarking and download restrictions
+- **Feedback System:** Structured forms with visual references for precise feedback
+- **Decision Records:** Track client approvals and change requests with timestamps
+- **Mobile Experience:** Fully responsive design for on-site reviews
+- **Branding Options:** White-label interface with customizable branding elements
 
-## 4. Development Phases and Tasks
+## 4. Development Roadmap
 
 ### Phase 1: Foundation (6 weeks)
-1. Initialize Next.js project with TypeScript configuration
-   - Set up ESLint, Prettier, and Husky hooks
-   - Configure Tailwind and Shadcn UI components
-   - Implement responsive layout framework
-2. Implement Supabase integration
-   - Create database tables with proper relations and constraints
-   - Set up storage buckets with security policies
-   - Configure authentication with role-based permissions
-   - Create API utility functions with error handling
-3. Build project dashboard
+1. Next.js project setup with TypeScript
+   - Configure ESLint, Prettier, and Git hooks
+   - Set up Tailwind CSS and Shadcn UI component library
+   - Implement responsive layout system
+2. Supabase integration
+   - Create database schema with proper relations and constraints
+   - Configure storage buckets with security policies
+   - Set up authentication with role-based permissions
+   - Build API utility functions with error handling
+3. Project dashboard implementation
    - Create project listing with filtering and sorting
-   - Implement project creation flow with templates
-   - Design basic navigation structure
-   - Add project analytics overview
+   - Develop project creation flow with templates
+   - Design navigation structure
+   - Implement basic analytics dashboard
 
 ### Phase 2: File Management (8 weeks)
-1. Develop file upload system
-   - Create drag-and-drop interface with progress indicators
+1. File upload system
+   - Build drag-and-drop interface with progress indicators
    - Implement chunked uploads for large files
-   - Build file type detection and validation
-   - Add batch upload functionality
-2. Build classification system
-   - Train classifier on architectural document samples
-   - Implement automatic metadata extraction
-   - Create folder suggestion algorithm
-   - Develop manual override for classifications
-3. Implement version control
-   - Develop version comparison visualization
-   - Build automated version detection
-   - Create version history timeline
+   - Create file type detection and validation
+   - Add batch upload capabilities
+2. Classification system
+   - Develop file content analyzer for metadata extraction
+   - Implement automatic folder suggestion algorithm
+   - Create manual classification override UI
+   - Build file organization visualization
+3. Version control implementation
+   - Create version comparison visualization
+   - Develop version detection algorithm
+   - Build version history timeline
    - Implement rollback functionality
 
 ### Phase 3: AI Assistant (10 weeks)
-1. Set up document processing pipeline
-   - Implement text extraction for all supported formats
-   - Build chunking and embedding generation
+1. Document processing pipeline
+   - Implement format-specific text extraction
+   - Build chunking and embedding generation system
    - Create vector storage and retrieval system
-   - Develop metadata filtering system
-2. Develop Q&A functionality
+   - Develop metadata filtering mechanisms
+2. Q&A functionality
    - Design conversational UI for project questions
    - Implement RAG pipeline with source attribution
    - Create feedback mechanism for answer quality
-   - Build answer caching for common questions
-3. Build conflict detection
-   - Implement spatial analysis for plan comparison
+   - Build response caching for frequently asked questions
+3. Conflict detection system
+   - Develop spatial analysis for plan comparison
    - Create visualization for identified conflicts
-   - Develop suggestion generation for resolutions
-   - Build conflict tracking system
+   - Implement suggestion generation for resolutions
+   - Build conflict tracking and resolution system
 
 ### Phase 4: Collaboration (8 weeks)
-1. Implement commenting system
+1. Annotation system
    - Build annotation layer for document viewer
-   - Create threading and notification system
-   - Implement mention functionality (@username)
+   - Create comment threading and notification system
+   - Implement @mention functionality
    - Develop comment export and reporting
-2. Develop approval workflows
-   - Create workflow designer for administrators
+2. Approval workflows
+   - Create workflow designer for project administrators
    - Implement approval actions and state transitions
-   - Build reporting for workflow status
-   - Create automatic notifications for approvals
-3. Create client portal
-   - Design simplified interface for clients
+   - Build workflow status dashboards
+   - Create notification system for approvals
+3. Client portal
+   - Design simplified client interface
    - Implement secure sharing mechanisms
    - Build feedback collection tools
    - Develop white-labeling capabilities
 
-### Phase 5: Refinement and Optimization (8 weeks)
-1. Optimize performance
-   - Implement caching strategies for common queries
+### Phase 5: Refinement (8 weeks)
+1. Performance optimization
+   - Implement strategic caching for common queries
    - Optimize large file handling
    - Add prefetching for improved navigation
    - Conduct load testing and address bottlenecks
-2. Enhance AI capabilities
-   - Fine-tune models for architectural domain
-   - Improve accuracy of conflict detection
-   - Add additional building code support
-   - Implement feedback loops for AI improvement
-3. Polish user experience
+2. AI capability enhancement
+   - Fine-tune models with architectural domain data
+   - Improve conflict detection accuracy
+   - Add support for additional building codes
+   - Implement feedback loops for continuous AI improvement
+3. UX refinement
    - Conduct usability testing and implement feedback
-   - Refine responsive design for all device sizes
+   - Enhance responsive design for all device sizes
    - Add keyboard shortcuts and accessibility improvements
-   - Implement onboarding tutorials and help documentation
-4. Implement analytics and reporting
-   - Build usage dashboards for administrators
+   - Create onboarding tutorials and contextual help
+4. Analytics integration
+   - Build comprehensive usage dashboards
    - Create project progress reporting
-   - Develop AI insight effectiveness tracking
-   - Design custom report generation
+   - Develop AI effectiveness tracking
+   - Implement custom report generation
 
-## 5. Technical Integration Points
+## 5. Integration Ecosystem
 
 ### 5.1 File Format Support
-- **DWG/DXF**: Use AutoCAD Web APIs for preview generation and data extraction
-- **RVT**: Use Forge Viewer API for Revit file visualization and element data
-- **PDF**: Use pdfplumber for text extraction, pdf.js for viewing
-- **SKP**: Use SketchUp API for model viewing
-- **IFC**: Use IFC.js for BIM model visualization and data extraction
-- **Integration Method**: Server-side processing with format-specific libraries
-- **Fallback Handling**: Generic preview generation for unsupported formats
+- **AutoCAD (DWG/DXF):** AutoCAD Web API for visualization and data extraction
+- **Revit (RVT):** Autodesk Forge Viewer API for BIM visualization
+- **PDF:** pdf.js for viewing, pdfplumber for text extraction
+- **SketchUp (SKP):** SketchUp API for 3D model viewing
+- **IFC:** IFC.js for BIM model visualization and data extraction
+- **Integration Approach:** Server-side processing with format-specific libraries
+- **Fallback Strategy:** Generic preview generation for unsupported formats
 
-### 5.2 External APIs
-- **Building Codes**: Access International Code Council API for regulation updates
-- **Materials Database**: Connect to Masterspec API for specifications
-- **Sustainability Metrics**: Integrate with EC3 for embodied carbon data
-- **Weather Data**: NOAA API for climate analysis and site conditions
-- **Authentication**: Implement OAuth for single sign-on with Autodesk, Procore
-- **Mapping**: Integration with mapping services for site context
-- **Cost Estimation**: Connect to RSMeans or similar for budget forecasting
+### 5.2 External Services
+- **Building Codes:** International Code Council API for regulation updates
+- **Material Specifications:** Masterspec API for material data
+- **Sustainability Metrics:** EC3 API for embodied carbon calculations
+- **Climate Data:** NOAA API for site analysis
+- **Authentication:** OAuth integration with Autodesk, Procore, and other industry tools
+- **Geospatial:** Mapping service integration for site context
+- **Cost Data:** RSMeans or similar API for budget forecasting
 
-### 5.3 Performance Optimizations
-- **File Processing**: Use Web Workers for client-side operations
-- **Image Loading**: Implement progressive loading with blurhash previews
-- **API Caching**: Redis cache for frequent queries with context-aware TTL
-- **Search Indexing**: Background task queue for document processing
-- **3D Viewing**: Level-of-detail rendering based on viewport and device capabilities
-- **Lazy Loading**: On-demand component and data loading
-- **Static Generation**: Pre-render common pages for faster initial loading
-- **CDN Distribution**: Optimize asset delivery through CDN
+### 5.3 Performance Strategy
+- **Client-side Processing:** Web Workers for computation-intensive operations
+- **Image Optimization:** Progressive loading with blurhash placeholders
+- **API Performance:** Redis caching with context-aware TTL
+- **Background Processing:** Task queue for document processing and analysis
+- **3D Rendering:** Adaptive level-of-detail based on device capabilities
+- **Component Loading:** On-demand loading for performance-critical sections
+- **Static Generation:** Pre-rendered content for frequently accessed pages
+- **Content Delivery:** CDN distribution for static assets and cached content
 
-## 6. Quality Assurance Requirements
+## 6. Quality Assurance Plan
 
-### 6.1 Testing Specifications
-- **Unit Tests**: Jest with 80% coverage requirement for core modules
-- **Integration Tests**: Cypress for critical user flows
-- **Performance Tests**: Lighthouse scores (Performance >90, Accessibility >95)
-- **AI Quality**: Regular evaluation using architectural test cases with expert review
-- **File Formats**: Test suite with sample files of all supported formats and sizes
-- **Cross-browser Testing**: Support for Chrome, Firefox, Safari, Edge
-- **Mobile Testing**: iPhone, iPad, and Android device compatibility
-- **Automated Testing**: CI/CD pipeline with GitHub Actions
+### 6.1 Testing Strategy
+- **Unit Testing:** Jest with 80% minimum coverage for core modules
+- **Integration Testing:** Cypress for critical user flows
+- **Performance Benchmarks:** Lighthouse scores (Performance >90, Accessibility >95)
+- **AI Validation:** Regular evaluation with architectural test cases and expert review
+- **Format Compatibility:** Comprehensive test suite with sample files of all supported formats
+- **Browser Support:** Chrome, Firefox, Safari, Edge, with automated cross-browser testing
+- **Device Testing:** iPhone, iPad, Android phones and tablets
+- **CI/CD:** Automated testing pipeline with GitHub Actions
 
-### 6.2 Error Handling
-- **Frontend Errors**: Error boundaries with fallback UIs and retry mechanisms
-- **API Errors**: Structured error responses with error codes and recovery suggestions
-- **AI Failures**: Graceful degradation with explanation and alternative paths
-- **File Processing**: Retry mechanism with user notification and partial result display
-- **Connectivity Issues**: Offline capabilities with synchronization when reconnected
-- **Monitoring**: Sentry integration with error grouping, alerts, and resolution tracking
-- **User Feedback**: In-app error reporting with screenshot capability
+### 6.2 Error Handling Framework
+- **Frontend Resilience:** React Error Boundaries with fallback UIs and retry capabilities
+- **API Robustness:** Structured error responses with error codes and recovery suggestions
+- **AI Fallbacks:** Graceful degradation with explanation and alternative paths
+- **File Processing Recovery:** Retry mechanism with user notification and partial results
+- **Offline Support:** Functionality preservation with synchronization when reconnected
+- **Monitoring System:** Sentry integration with error grouping and resolution tracking
+- **User Feedback Loop:** In-app error reporting with screenshot capability
 
-### 6.3 Security Measures
-- **Authentication**: PKCE flow with refresh tokens and MFA support
-- **Authorization**: Row-level security in Supabase with fine-grained permissions
-- **Data Encryption**: TLS in transit, AES-256 at rest for all sensitive data
-- **File Scanning**: Malware check before storage with quarantine for suspicious files
-- **Audit Logging**: Record all file access and modifications with user attribution
-- **Rate Limiting**: Prevent API abuse with tiered rate limits
-- **Input Validation**: Server-side validation for all user inputs
-- **GDPR Compliance**: Data processing agreements and right-to-be-forgotten support
+### 6.3 Security Architecture
+- **Authentication:** PKCE flow with refresh tokens and Multi-Factor Authentication
+- **Authorization:** Row-level security in Supabase with fine-grained permissions
+- **Data Protection:** TLS in transit, AES-256 encryption at rest for sensitive data
+- **File Safety:** Malware scanning before storage with quarantine capabilities
+- **Activity Tracking:** Comprehensive audit logging for all file access and modifications
+- **API Protection:** Tiered rate limiting to prevent abuse
+- **Input Safety:** Server-side validation for all user inputs
+- **Compliance:** GDPR-compliant data handling with right-to-be-forgotten implementation
 
-## 7. Implementation Notes for Cursor Agent
+## 7. Implementation Guidelines
 
-1. Start with the database schema implementation first
-2. Focus on file upload and organization before AI features
-3. Use TypeScript interfaces for all data structures
-4. Implement error handling for all API calls
-5. Create reusable components for common UI patterns
-6. Use React Server Components for data-fetching pages
-7. Implement progressive enhancement for complex features
-8. Prioritize responsive design from the beginning
-9. Handle large files with chunked processing
-10. Document all AI integration points with example prompts
-11. Follow naming conventions: PascalCase for components, camelCase for functions/variables
-12. Implement feature flags for phased rollout of complex features
-13. Create comprehensive logging for debugging and monitoring
-14. Build with i18n support from the start, even if initially English-only
+1. Start with database schema implementation
+2. Prioritize file management before AI features
+3. Use TypeScript interfaces for all data structures with Zod validation
+4. Implement comprehensive error handling for all API calls
+5. Create a component library of reusable UI elements
+6. Leverage React Server Components for data-fetching operations
+7. Follow progressive enhancement principles for complex features
+8. Design responsive interfaces from the start
+9. Implement chunked processing for large files
+10. Document all AI integration points with sample prompts
+11. Maintain consistent naming: PascalCase for components, camelCase for functions/variables
+12. Use feature flags for phased rollout of complex functionality
+13. Implement structured logging for debugging and monitoring
+14. Build with internationalization support from the beginning
 
-## 8. User Experience Considerations
+## 8. User Experience Blueprint
 
-### 8.1 Onboarding Flow
-- Welcome tutorial with interactive guided tour
-- Template project with sample files for demonstration
-- Role-specific onboarding paths (Admin vs. Architect vs. Client)
-- Progressive feature introduction to avoid overwhelming new users
-- Contextual help tooltips for advanced features
+### 8.1 Onboarding Experience
+- Interactive guided tour for new users
+- Template projects with sample files demonstrating key features
+- Role-specific onboarding paths (Admin, Architect, Client)
+- Progressive feature introduction to prevent overwhelm
+- Contextual help system for advanced functionality
 
-### 8.2 Accessibility
-- WCAG 2.1 AA compliance for all interfaces
-- Keyboard navigation support for all functions
+### 8.2 Accessibility Requirements
+- WCAG 2.1 AA compliance across all interfaces
+- Full keyboard navigation support
 - Screen reader compatibility with ARIA attributes
 - Color contrast ratios meeting accessibility standards
 - Alternative text for all visual elements
 
-### 8.3 Localization
-- Initial support for English, Spanish, French, German, and Mandarin
-- Date, time, and number formatting based on locale
-- Right-to-left language support in UI framework
-- Translatable error messages and notifications
-- Region-specific building code references
+### 8.3 Internationalization
+- Initial language support: English, Spanish, French, German, and Mandarin
+- Locale-aware formatting for dates, times, and numbers
+- RTL language support in UI framework
+- Translatable interface elements, error messages, and notifications
+- Region-specific building code references where applicable
 
-### 8.4 Offline Support
-- Progressive Web App capabilities for basic functionality without connection
-- Offline file viewing for previously accessed documents
-- Queued actions that sync when connection is restored
-- Clear indication of connection status and offline mode
+### 8.4 Offline Capabilities
+- Progressive Web App implementation for core functionality
+- Offline viewing for previously accessed documents
+- Action queuing for synchronization when connection is restored
+- Clear connection status indicators
 - Local storage management for offline data
 
-## 9. Analytics and Reporting
+## 9. Analytics & Reporting
 
 ### 9.1 Usage Analytics
 - Project activity dashboards for administrators
@@ -429,43 +434,43 @@ ArchitectAI is an AI-powered design management platform for architectural teams 
 ### 9.2 Business Intelligence
 - Project progress visualization
 - Resource allocation and utilization reporting
-- Bottleneck identification in workflows
+- Workflow bottleneck identification
 - Client engagement metrics
 - ROI calculation based on time savings
 
-### 9.3 Export Capabilities
-- Project data export in industry-standard formats
-- Custom report generation with filtering options
-- Scheduled report delivery via email
+### 9.3 Export Framework
+- Industry-standard format exports
+- Customizable report generation
+- Scheduled report delivery
 - Compliance documentation packages
-- Archive creation for project handoffs
+- Project archive creation for handoffs
 
-## Appendix: API Endpoints
+## Appendix: API Specification
 
 ### Project API
-- `GET /api/projects`: List all projects with pagination and filters
+- `GET /api/projects`: List projects with pagination and filters
 - `POST /api/projects`: Create new project
 - `GET /api/projects/{id}`: Get project details
-- `PUT /api/projects/{id}`: Update project
-- `DELETE /api/projects/{id}`: Delete project
+- `PUT /api/projects/{id}`: Update project information
+- `DELETE /api/projects/{id}`: Archive/delete project
 - `GET /api/projects/{id}/stats`: Get project analytics
 - `POST /api/projects/{id}/archive`: Create project archive
 - `POST /api/projects/{id}/clone`: Clone project structure
 
 ### File API
-- `GET /api/files`: List files (with filters)
+- `GET /api/files`: List files with filtering options
 - `POST /api/files/upload`: Upload new file
-- `GET /api/files/{id}`: Get file details
+- `GET /api/files/{id}`: Get file details and metadata
 - `PUT /api/files/{id}`: Update file metadata
-- `DELETE /api/files/{id}`: Delete file
+- `DELETE /api/files/{id}`: Delete/archive file
 - `GET /api/files/{id}/versions`: List file versions
 - `GET /api/files/{id}/preview`: Get file preview
-- `POST /api/files/batch`: Batch file operations
+- `POST /api/files/batch`: Perform batch file operations
 - `POST /api/files/{id}/classify`: Manually classify file
 - `POST /api/files/{id}/restore`: Restore previous version
 
 ### AI API
-- `POST /api/ai/query`: Ask question about project
+- `POST /api/ai/query`: Ask question about project documents
 - `POST /api/ai/analyze`: Analyze file for insights
 - `POST /api/ai/conflicts`: Detect conflicts between files
 - `POST /api/ai/compliance`: Check code compliance
@@ -475,19 +480,19 @@ ArchitectAI is an AI-powered design management platform for architectural teams 
 - `GET /api/ai/insights/{projectId}`: List all AI insights for project
 
 ### Collaboration API
-- `POST /api/comments`: Add comment
-- `GET /api/comments/{fileId}`: Get comments for file
+- `POST /api/comments`: Create comment
+- `GET /api/comments/{fileId}`: Get file comments
 - `PUT /api/comments/{id}`: Update comment
 - `DELETE /api/comments/{id}`: Delete comment
 - `POST /api/workflows`: Create approval workflow
 - `PUT /api/workflows/{id}/transition`: Update workflow state
-- `GET /api/workflows/{projectId}`: List workflows for project
-- `POST /api/share`: Create sharing link
+- `GET /api/workflows/{projectId}`: List project workflows
+- `POST /api/share`: Create secure sharing link
 - `GET /api/notifications`: Get user notifications
 - `PUT /api/notifications/{id}/read`: Mark notification as read
 
 ---
 
 *Document Status: Implementation-Ready*  
-*Last Updated: February 26, 2025*
-*Version: 2.0*
+*Last Updated: May 15, 2023*
+*Version: 2.1*
